@@ -1,0 +1,10 @@
+requirements_extractor:
+  max_input_chars: 100000
+  max_execution_seconds: 45
+
+techspec_generator:
+  max_input_chars: 75000
+  max_execution_seconds: 45
+
+pipeline:
+  max_execution_seconds: 90

@@ -1,0 +1,9 @@
+model:
+  name: claude-sonnet-4-6
+  max_tokens: 2000
+  api_version: "2023-06-01"
+
+execution:
+  request_timeout_seconds: 30
+  max_retries: 2
+  retry_backoff_seconds: 1.0

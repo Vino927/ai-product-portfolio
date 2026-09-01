@@ -1,0 +1,10 @@
+{
+  "agent": "requirements_extractor",
+  "duration_seconds": 3.742,
+  "run_id": "75ce8c0d6a0c464ebd98fcb8d91b9df2",
+  "status": "success",
+  "usage": {
+    "input_tokens": 1648,
+    "output_tokens": 1176
+  }
+}

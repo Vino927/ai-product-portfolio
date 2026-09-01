@@ -1,0 +1,32 @@
+[meeting_start_time: 05/24/2023 10:00 AM]
+[meeting_end_time: 05/24/2023 10:45 AM]
+[meeting_title: Fraud Detection System Kickoff]
+[speakers: Sarah (Project Manager), John (Business Analyst), Lisa (Product Owner), Michael (Data Scientist), Priya (Engineering Lead)]
+
+[00:00.00] Sarah: Hey everyone, thanks for joining today's meeting. I know we're all excited to kick off the new fraud detection system project. John, could you get us started by sharing the key business objectives driving this initiative?
+
+[00:35.15] John: Absolutely, thanks Sarah. So, our primary goal here is to make a significant dent in our fraud losses. We're targeting a 25% reduction over the next 12 months, which would be huge for the business. At the same time, we want to make sure our fraud investigations are more accurate and efficient, so we're not wasting time chasing false positives. And of course, we can't introduce any friction for our good customers - if anything, we want their experience to be even smoother.
+
+[01:20.30] Sarah: Makes sense, thanks John. Okay, Lisa, walk us through the main functionality you envision for this new system.
+
+[01:40.50] Lisa: Right, so the core of this thing needs to be real-time transaction scoring. So like, as each payment comes in, we need to assign it a risk score right away, based on a bunch of factors - the attributes of the transaction itself, the customer's profile and history with us, all that stuff. And those scores need to be available immediately for other systems to consume and act on.
+
+[02:25.10] Lisa: Another key piece is the rules engine. Our fraud ops team, they need to be able to define and tweak the detection rules themselves, without having to tap engineering every time. And these rules can get pretty complex, like looking at combinations of different attributes. Oh, and super important - we need a way to simulate and test out rule changes before they go live, so we don't accidentally break anything.
+
+[03:10.25] Michael: From an ML perspective, we'll want to leverage both supervised and unsupervised models to adapt to evolving fraud patterns. Supervised for stuff like classification based on known fraud labels, unsupervised for anomaly detection, finding those weird outliers. My team will need some kind of interface or portal to manage the whole model development lifecycle - training, validation, deployment, monitoring, all that jazz.
+
+[04:05.40] Lisa: And then on the output side, when a transaction exceeds our risk threshold, it should trigger an alert that gets routed to the right investigator based on factors like the severity level and the team's current workload. And then they'll need a slick case management interface to investigate and resolve those alerts efficiently.
+
+[04:50.55] John: Let's not forget about third-party data. To really boost our accuracy, we'll want to incorporate signals from external sources - things like device fingerprinting, IP reputation scores, all that good stuff. We need to be able to ingest that data both in batch and real-time and marry it up with our internal data.
+
+[05:40.20] Sarah: Awesome, this is all super helpful context. Now, let's shift gears a bit and talk about some of the non-functional aspects. What are the key "ilities" we need to design for?
+
+[06:10.35] Priya: Scalability and availability are going to be absolutely critical. We're talking transaction volumes in the neighborhood of 10k per second at peak, so the platform needs to scale as load grows without downtime.
+
+[07:00] Priya: Security and compliance are a big deal for financial data. We need strong encryption, strong authentication, detailed auditability, and support for relevant requirements such as PCI, GDPR, and CCPA.
+
+[08:00] Priya: The architecture also needs to be modular and loosely coupled so we can swap or evolve components without major changes. Interfaces need to be well-defined and able to evolve safely.
+
+[09:00] Team discussion: Infrastructure sizing still needs follow-up. Data consistency and clean, correctly prepared data across pipelines were raised as risks that need to be addressed in the technical design.
+
+[10:35] Sarah: Let's capture those as follow-up items and circle back early next week with a first cut of the technical design.

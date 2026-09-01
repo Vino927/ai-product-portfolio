@@ -1,0 +1,10 @@
+{
+  "agent": "techspec_generator",
+  "duration_seconds": 5.216,
+  "run_id": "75ce8c0d6a0c464ebd98fcb8d91b9df2",
+  "status": "success",
+  "usage": {
+    "input_tokens": 1439,
+    "output_tokens": 1764
+  }
+}

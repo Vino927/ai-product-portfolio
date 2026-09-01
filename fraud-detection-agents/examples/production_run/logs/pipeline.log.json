@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "brd": "io/outputs/brd.md",
+    "techspec": "io/outputs/techspec.md"
+  },
+  "duration_seconds": 9.081,
+  "input_file": "io/inputs/fraud_detection_kickoff_transcript.txt",
+  "model": "claude-sonnet-4-6",
+  "output_dir": "io/outputs",
+  "run_id": "75ce8c0d6a0c464ebd98fcb8d91b9df2",
+  "started_at_epoch": 1788232172.4,
+  "status": "success",
+  "usage": {
+    "input_tokens": 3087,
+    "output_tokens": 2940
+  }
+}

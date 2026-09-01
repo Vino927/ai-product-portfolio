@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fraud-detection-agents"
+version = "1.0.0"
+description = "Production-style bounded two-agent AI workflow for requirements and technical specification generation"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.8,<3",
+    "pydantic-settings>=2.4,<3",
+    "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2,<9"]
+
+[project.scripts]
+fraud-agents = "src.main:main"
+
+[tool.setuptools.packages.find]
+include = ["src*", "orchestration*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
