@@ -4,22 +4,22 @@ Output valid Markdown with these sections:
 
 # Technical Specification
 
-## Required Output
+### Required Output
 
-Produce a structured Business Requirements Document containing:
+Produce a technical specification containing:
 
-1. Business Objective
-2. Scope
-3. Functional Requirements
-4. Non-Functional Requirements
-5. Business Rules
-6. Data Requirements
-7. Dependencies
-8. Risks
-9. Open Questions
+1. System Architecture
+2. Components and Responsibilities
+3. Data Model
+4. APIs and Interfaces
+5. Processing / Data Flow
+6. Security Controls
+7. Error Handling and Resilience
+8. Observability
+9. Deployment and Configuration
+10. Implementation Phases
 
-Do not invent requirements that are not supported by the source material. Clearly identify unresolved information as an open question.
-Carry forward unresolved items from Questions & Risks.
+Base the design on the supplied BRD. Clearly identify technical assumptions or unresolved design decisions rather than presenting them as confirmed requirements.
 
 Use Markdown lists, code spans for API paths, and subheadings where useful.
 
