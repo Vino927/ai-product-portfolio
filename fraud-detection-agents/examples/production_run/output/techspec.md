@@ -88,12 +88,42 @@ technologies remain to be defined.
 
 ## 4. APIs and Interfaces
 
-Required logical interfaces: - Transaction ingestion. - Real-time
-risk-score consumption. - Fraud-rule management. - Rule
-simulation/testing. - Model lifecycle management. - Batch and real-time
-external-signal ingestion. - Alert routing. - Case management.
+The following interfaces are logical contracts; transport and implementation technology remain open.
 
-Interfaces should be designed to evolve safely.
+### Transaction Scoring
+
+- `POST /v1/risk-scores`
+  - Input: transaction attributes, customer identifier/context, and available external signals.
+  - Output: risk score and sufficient evaluation metadata for downstream action and auditability.
+
+### Rules Management
+
+- `POST /v1/rules`
+- `PUT /v1/rules/{rule_id}`
+- `POST /v1/rules/{rule_id}/simulate`
+- `POST /v1/rules/{rule_id}/activate`
+
+### Model Lifecycle
+
+- `POST /v1/models/validation-runs`
+- `POST /v1/models/{model_id}/deployments`
+- `GET /v1/models/{model_id}/monitoring`
+
+### Alerts and Cases
+
+- `GET /v1/alerts`
+- `POST /v1/alerts/{alert_id}/assignments`
+- `GET /v1/cases/{case_id}`
+- `PATCH /v1/cases/{case_id}`
+  - Requirement mapping: FR10–FR12.
+
+### Third-Party Data
+
+- `POST /v1/external-signals`
+- Batch ingestion contract for approved external datasets.
+
+All externally consumed interfaces should be versioned to support NFR8 and reduce disruption as components evolve.
+
 
 **Open design decision:** Protocols, endpoint contracts, schemas,
 authentication, and latency SLAs were not specified.
@@ -124,12 +154,12 @@ compliance controls require further design.
 
 ## 7. Error Handling and Resilience
 
-Design requirements derived from the availability/modularity goals: -
-Isolate component failures where possible. - Detect failures in
-real-time and batch processing. - Prevent invalid/incomplete data from
-silently entering scoring workflows. - Record failures with sufficient
-context for investigation. - Prevent interface evolution from
-unexpectedly breaking dependent components.
+Design requirements derived from the availability/modularity goals: 
+- Isolate component failures where possible.
+- Detect failures in real-time and batch processing.
+- Prevent invalid/incomplete data from silently entering scoring workflows.
+- Record failures with sufficient context for investigation.
+- Prevent interface evolution from unexpectedly breaking dependent components.
 
 **Technical assumption:** Retry, timeout, circuit-breaker, dead-letter,
 and recovery strategies should be selected after
@@ -137,10 +167,15 @@ infrastructure/interface technologies are chosen.
 
 ## 8. Observability
 
-Monitor: - Transaction volume. - Scoring availability/failures. -
-Rules-engine execution. - Model deployment/monitoring. - External-data
-ingestion. - Alert generation/routing. - Data consistency/preparation
-failures. - Security/audit events.
+Monitor: 
+- Transaction volume.
+- Scoring availability/failures.
+-Rules-engine execution.
+- Model deployment/monitoring.
+- External-data ingestion.
+- Alert generation/routing.
+- Data consistency/preparation failures.
+- Security/audit events.
 
 **Open design decision:** Exact metrics, thresholds, dashboards, log
 retention, tracing, and SLOs remain to be defined.
