@@ -40,19 +40,7 @@ The project focuses on orchestration, configuration validation, guardrails, fail
 Reads meeting notes and converts unstructured business discussion into a structured BRD containing requirements, constraints, assumptions, and acceptance criteria.
 ### Tech Spec Generator
 Consumes the BRD produced by the first agent and generates a technical specification covering implementation considerations, interfaces, data flow, and operational requirements.
-## Architecture
 
-```text
-src/main.py
-  -> validated runtime secrets (src/config.py)
-  -> validated application config (config/settings.yaml)
-  -> validated guardrails (config/guardrails.yaml)
-  -> orchestration/pipeline.py
-       -> RequirementsExtractorAgent
-       -> TechSpecGeneratorAgent
-  -> io/outputs/{brd.md,techspec.md}
-  -> logs/runs/<run_id>/*.log.json
-```
 ## Guardrails
 - Operational limits are defined separately from agent code in config/guardrails.yaml.
 - Controls include:
