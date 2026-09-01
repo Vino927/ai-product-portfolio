@@ -35,10 +35,10 @@ Business Meeting Notes
 
 The project focuses on orchestration, configuration validation, guardrails, failure handling, observability, and separation of prompts from code. The agents are domain-agnostic; a fraud-detection transcript can be used as the portfolio scenario.
 
-##Agents
-###Requirements Extractor
+## Agents
+### Requirements Extractor
 Reads meeting notes and converts unstructured business discussion into a structured BRD containing requirements, constraints, assumptions, and acceptance criteria.
-###Tech Spec Generator
+### Tech Spec Generator
 Consumes the BRD produced by the first agent and generates a technical specification covering implementation considerations, interfaces, data flow, and operational requirements.
 ## Architecture
 
