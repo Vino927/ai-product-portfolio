@@ -1,5 +1,5 @@
 
-# Fraud Detection Multi-Agent Pipeline - Requirements and Technical Specification 
+# Fraud Detection Multi-Agent Pipeline to create Requirements and Technical Specifications
 
 A multi-agent workflow that turns business meeting notes into structured business requirements and a technical specification.
 
