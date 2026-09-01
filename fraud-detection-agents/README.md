@@ -31,7 +31,7 @@ Business Meeting Notes
              │
              ▼
       Technical Specification
-
+```
 
 The project focuses on orchestration, configuration validation, guardrails, failure handling, observability, and separation of prompts from code. The agents are domain-agnostic; a fraud-detection transcript can be used as the portfolio scenario.
 
