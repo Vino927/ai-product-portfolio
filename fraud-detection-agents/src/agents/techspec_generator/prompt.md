@@ -4,12 +4,21 @@ Output valid Markdown with these sections:
 
 # Technical Specification
 
-## 1. Architecture Overview
-## 2. Data Flow
-## 3. Key Interfaces / APIs
-## 4. Non-Functional Design
-Map this section to each NFR in the BRD.
-## 5. Open Items Carried from BRD
+## Required Output
+
+Produce a structured Business Requirements Document containing:
+
+1. Business Objective
+2. Scope
+3. Functional Requirements
+4. Non-Functional Requirements
+5. Business Rules
+6. Data Requirements
+7. Dependencies
+8. Risks
+9. Open Questions
+
+Do not invent requirements that are not supported by the source material. Clearly identify unresolved information as an open question.
 Carry forward unresolved items from Questions & Risks.
 
 Use Markdown lists, code spans for API paths, and subheadings where useful.
