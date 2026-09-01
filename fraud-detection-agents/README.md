@@ -51,6 +51,7 @@ Consumes the BRD produced by the first agent and generates a technical specifica
 - Pipeline-level budgets
 
 ### Configuration
+```
 Environment Variables
 └── API credentials
 
@@ -59,7 +60,7 @@ config/settings.yaml
 
 config/guardrails.yaml
 └── Agent and pipeline limits
-
+```
 The application intentionally does **not** load `.env` files. `.env.example` documents variables for local setup; export them into the process environment before running.
 
 ## Observability
