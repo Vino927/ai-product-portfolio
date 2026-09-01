@@ -65,12 +65,12 @@ The application intentionally does **not** load `.env` files. `.env.example` doc
 
 ## Observability
 Each execution receives a run ID.
-
+```
 logs/runs/{run_id}/
 ├── extract_reqs.log.json
 ├── generate_techspec.log.json
 └── pipeline.log.json
-
+```
 The logs capture execution status, timing, model usage, and pipeline-level information so activity from the two agents can be correlated.
 ## Setup
 
