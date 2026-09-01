@@ -1,11 +1,45 @@
-# Fraud Detection Agents
 
-A production-style agentic AI portfolio project demonstrating a bounded two-agent workflow:
+# Fraud Detection Multi-Agent Pipeline - Requirements and Technical Specification 
 
-`meeting transcript -> requirements agent -> BRD -> architecture agent -> technical specification`
+A multi-agent workflow that turns business meeting notes into structured business requirements and a technical specification.
+
+The project uses two specialized Claude agents with structured handoffs, configurable guardrails, retry and timeout handling, validated configuration, and per-run logging.
+
+## How It Works
+
+```text
+Business Meeting Notes
+         │
+         ▼
+┌──────────────────────────┐
+│ Requirements Extractor   │
+│                          │
+│ Extracts requirements,   │
+│ constraints, assumptions │
+│ and acceptance criteria  │
+└────────────┬─────────────┘
+             │
+             │ Structured handoff
+             ▼
+┌──────────────────────────┐
+│ Tech Spec Generator      │
+│                          │
+│ Converts requirements    │
+│ into an implementation   │
+│ specification            │
+└────────────┬─────────────┘
+             │
+             ▼
+      Technical Specification
+
 
 The project focuses on orchestration, configuration validation, guardrails, failure handling, observability, and separation of prompts from code. The agents are domain-agnostic; a fraud-detection transcript can be used as the portfolio scenario.
 
+##Agents
+###Requirements Extractor
+Reads meeting notes and converts unstructured business discussion into a structured BRD containing requirements, constraints, assumptions, and acceptance criteria.
+###Tech Spec Generator
+Consumes the BRD produced by the first agent and generates a technical specification covering implementation considerations, interfaces, data flow, and operational requirements.
 ## Architecture
 
 ```text
@@ -19,16 +53,36 @@ src/main.py
   -> io/outputs/{brd.md,techspec.md}
   -> logs/runs/<run_id>/*.log.json
 ```
+##Guardrails
+- Operational limits are defined separately from agent code in config/guardrails.yaml.
+- Controls include:
+- Execution time limits
+- Input-size limits
+- Retry limits
+- Agent-level resource limits
+- Pipeline-level budgets
 
-### Configuration boundary
+### Configuration
+Environment Variables
+└── API credentials
 
-- Runtime environment: secrets and deployment-specific values only (`ANTHROPIC_API_KEY`, optional API URL override).
-- `config/settings.yaml`: non-secret model and execution behavior.
-- `config/guardrails.yaml`: per-agent and pipeline resource limits.
-- Prompt files: version-controlled next to each agent, not embedded in Python.
+config/settings.yaml
+└── Non-secret application settings
+
+config/guardrails.yaml
+└── Agent and pipeline limits
 
 The application intentionally does **not** load `.env` files. `.env.example` documents variables for local setup; export them into the process environment before running.
 
+##Observability
+Each execution receives a run ID.
+
+logs/runs/{run_id}/
+├── extract_reqs.log.json
+├── generate_techspec.log.json
+└── pipeline.log.json
+
+The logs capture execution status, timing, model usage, and pipeline-level information so activity from the two agents can be correlated.
 ## Setup
 
 ```bash
