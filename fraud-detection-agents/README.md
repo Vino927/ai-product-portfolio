@@ -53,7 +53,7 @@ src/main.py
   -> io/outputs/{brd.md,techspec.md}
   -> logs/runs/<run_id>/*.log.json
 ```
-##Guardrails
+## Guardrails
 - Operational limits are defined separately from agent code in config/guardrails.yaml.
 - Controls include:
 - Execution time limits
@@ -74,7 +74,7 @@ config/guardrails.yaml
 
 The application intentionally does **not** load `.env` files. `.env.example` documents variables for local setup; export them into the process environment before running.
 
-##Observability
+## Observability
 Each execution receives a run ID.
 
 logs/runs/{run_id}/
