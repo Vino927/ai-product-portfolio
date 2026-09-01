@@ -1,155 +1,176 @@
-# Technical Specification
+# Technical Specification --- Fraud Detection System
 
-## 1. Architecture Overview
+> Derived from the kickoff requirements. Items not decided in the
+> meeting are explicitly marked as **Technical assumption** or **Open
+> design decision**.
 
-The solution is organized as a set of loosely coupled capabilities connected through stable, versioned interfaces.
+## 1. System Architecture
 
-### Core Components
+Use a modular, loosely coupled architecture:
 
-1. **Transaction Intake** — receives payment transactions and makes them available to the scoring path.
-2. **Feature/Data Assembly** — combines transaction attributes, customer profile/history, and available third-party signals into the scoring context.
-3. **Risk Scoring Service** — evaluates the assembled context using detection rules and deployed machine-learning models and returns a risk score in real time.
-4. **Rules Management Service** — allows authorized fraud-operations users to create, modify, simulate, test, and activate rules.
-5. **Model Lifecycle Service** — provides the data-science workflow for training, validation, deployment, and monitoring of supervised and unsupervised models.
-6. **Alerting and Routing Service** — creates alerts when configured risk thresholds are exceeded and assigns them using severity and investigator workload.
-7. **Case Management Service** — supports investigator review, investigation, disposition, and resolution of alerts.
-8. **External Data Ingestion** — accepts device-fingerprinting, IP-reputation, external-score, and other approved third-party signals through batch and real-time ingestion paths.
-9. **Audit Service** — records security-sensitive, configuration, model, rule, and investigation activity required for operational traceability and compliance.
+``` text
+Transaction Sources
+        |
+        v
+Data Ingestion / Enrichment
+        |
+        v
+Real-Time Scoring
+   |          |
+   v          v
+ Rules     ML Models
+   \          /
+    v        v
+     Risk Decision
+          |
+          +----> Downstream Systems
+          |
+          v
+     Alert Routing
+          |
+          v
+     Case Management
 
-No specific cloud provider, database, programming language, message broker, or ML framework is mandated by the BRD.
+External Signals -- batch / real time --> Ingestion / Enrichment
+```
 
-## 2. Data Flow
+The architecture must support approximately 10,000 transactions/second
+at peak, safe interface evolution, and component replacement without
+major system-wide changes.
 
-### Real-Time Transaction Path
+**Technical assumption:** Specific cloud services, brokers, databases,
+and deployment platforms are not selected because the source meeting did
+not specify them.
 
-1. A transaction enters the Transaction Intake component.
-2. Feature/Data Assembly retrieves or receives relevant transaction attributes, customer profile/history, and available real-time third-party signals.
-3. The Risk Scoring Service evaluates applicable rules and deployed detection models.
-4. A risk score is returned for immediate downstream consumption.
-5. If the score exceeds the configured threshold, the Alerting and Routing Service creates an alert.
-6. The alert is assigned using severity and current investigator workload.
-7. The investigator works the alert through the Case Management Service and records the disposition.
-8. Relevant actions and configuration changes are recorded in the audit trail.
+## 2. Components and Responsibilities
 
-### Batch Data Path
+-   **Data Ingestion and Enrichment:** Combines transaction, customer,
+    and third-party data.
+-   **Real-Time Scoring Service:** Coordinates inputs and produces
+    transaction risk scores.
+-   **Rules Engine:** Evaluates configurable multi-attribute fraud rules
+    and supports simulation.
+-   **ML Detection Services:** Supports supervised classification and
+    unsupervised anomaly detection.
+-   **Model Lifecycle Interface:** Supports training, validation,
+    deployment, and monitoring.
+-   **Alert Routing:** Creates and routes threshold-triggered alerts by
+    severity/workload.
+-   **Case Management:** Supports investigation and resolution.
+-   **External Data Integration:** Handles batch and real-time
+    third-party signals.
+-   **Audit and Monitoring:** Records relevant system/user activity and
+    operational telemetry.
 
-1. External Data Ingestion receives supported third-party datasets in batch mode.
-2. Data is validated and associated with the appropriate internal customer or transaction context.
-3. Prepared data becomes available to scoring, model-development, and monitoring workflows as applicable.
+## 3. Data Model
 
-### Rules Lifecycle
+Logical entities implied by the requirements:
 
-`Draft -> Simulate/Test -> Review/Approval -> Active -> Replaced/Retired`
+-   **Transaction:** identifier, attributes, customer reference,
+    timestamp.
+-   **Customer Context:** identifier, profile attributes, relevant
+    history.
+-   **Risk Assessment:** transaction reference, score, timestamp,
+    detection outputs.
+-   **Fraud Rule:** identifier, definition, status/version, evaluation
+    configuration.
+-   **Model:** identifier/version, model type, lifecycle status,
+    monitoring information.
+-   **Alert:** identifier, risk/transaction reference, severity,
+    assignment, status.
+-   **Case:** identifier, related alerts, investigator assignment,
+    status/outcome.
+-   **External Signal:** provider, signal type/value, entity reference,
+    timestamp.
 
-The BRD requires simulation and testing before production activation. Approval ownership remains an open item.
+**Open design decision:** Exact schemas, retention periods, and storage
+technologies remain to be defined.
 
-### Model Lifecycle
+## 4. APIs and Interfaces
 
-`Train -> Validate -> Deploy -> Monitor -> Replace/Roll Back`
+Required logical interfaces: - Transaction ingestion. - Real-time
+risk-score consumption. - Fraud-rule management. - Rule
+simulation/testing. - Model lifecycle management. - Batch and real-time
+external-signal ingestion. - Alert routing. - Case management.
 
-The BRD requires lifecycle support but does not define model approval criteria or rollback policy.
+Interfaces should be designed to evolve safely.
 
-## 3. Key Interfaces / APIs
+**Open design decision:** Protocols, endpoint contracts, schemas,
+authentication, and latency SLAs were not specified.
 
-The following interfaces are logical contracts; transport and implementation technology remain open.
+## 5. Processing / Data Flow
 
-### Transaction Scoring
+1.  Receive transaction.
+2.  Associate customer profile/history.
+3.  Incorporate available external signals.
+4.  Evaluate fraud rules.
+5.  Apply relevant supervised/unsupervised model outputs.
+6.  Produce risk score.
+7.  Expose score to downstream systems.
+8.  Generate an alert if the applicable threshold is exceeded.
+9.  Route alert based on severity and workload.
+10. Present alert for investigation/resolution.
+11. Record relevant activity for auditability and monitoring.
 
-- `POST /v1/risk-scores`
-  - Input: transaction attributes, customer identifier/context, and available external signals.
-  - Output: risk score and sufficient evaluation metadata for downstream action and auditability.
-  - Requirement mapping: FR1–FR3, FR13–FR15.
+## 6. Security Controls
 
-### Rules Management
+The design must provide strong encryption, strong authentication,
+detailed auditability, and controls supporting applicable PCI, GDPR, and
+CCPA requirements.
 
-- `POST /v1/rules`
-- `PUT /v1/rules/{rule_id}`
-- `POST /v1/rules/{rule_id}/simulate`
-- `POST /v1/rules/{rule_id}/activate`
-  - Requirement mapping: FR4–FR6.
+**Open design decision:** Encryption standards, key management,
+authorization model, identity provider, retention policies, and detailed
+compliance controls require further design.
 
-### Model Lifecycle
+## 7. Error Handling and Resilience
 
-- `POST /v1/models/validation-runs`
-- `POST /v1/models/{model_id}/deployments`
-- `GET /v1/models/{model_id}/monitoring`
-  - Requirement mapping: FR7–FR9.
+Design requirements derived from the availability/modularity goals: -
+Isolate component failures where possible. - Detect failures in
+real-time and batch processing. - Prevent invalid/incomplete data from
+silently entering scoring workflows. - Record failures with sufficient
+context for investigation. - Prevent interface evolution from
+unexpectedly breaking dependent components.
 
-### Alerts and Cases
+**Technical assumption:** Retry, timeout, circuit-breaker, dead-letter,
+and recovery strategies should be selected after
+infrastructure/interface technologies are chosen.
 
-- `GET /v1/alerts`
-- `POST /v1/alerts/{alert_id}/assignments`
-- `GET /v1/cases/{case_id}`
-- `PATCH /v1/cases/{case_id}`
-  - Requirement mapping: FR10–FR12.
+## 8. Observability
 
-### Third-Party Data
+Monitor: - Transaction volume. - Scoring availability/failures. -
+Rules-engine execution. - Model deployment/monitoring. - External-data
+ingestion. - Alert generation/routing. - Data consistency/preparation
+failures. - Security/audit events.
 
-- `POST /v1/external-signals`
-- Batch ingestion contract for approved external datasets.
-  - Requirement mapping: FR13–FR15.
+**Open design decision:** Exact metrics, thresholds, dashboards, log
+retention, tracing, and SLOs remain to be defined.
 
-All externally consumed interfaces should be versioned to support NFR8 and reduce disruption as components evolve.
+## 9. Deployment and Configuration
 
-## 4. Non-Functional Design
+Major components should be independently evolvable where practical.
+Controlled configuration includes fraud rules/versions, risk thresholds,
+model versions/lifecycle state, external integrations, and operational
+settings. Rule changes must support simulation before production
+activation.
 
-### NFR1 — Throughput
+**Open design decision:** Infrastructure sizing, deployment platform,
+environment topology, release strategy, and scaling configuration
+require follow-up.
 
-- Design the scoring path for the stated peak load of approximately **10,000 transactions per second**.
-- Establish performance tests that exercise peak load and expected growth scenarios before production release.
-- Keep synchronous scoring-path dependencies bounded so downstream integration does not create uncontrolled latency.
+## 10. Implementation Phases
 
-### NFR2 — Scalability
+The meeting did not define a roadmap. A proposed technical sequence is:
 
-- Keep scoring components independently scalable.
-- Avoid designs that require platform-wide redeployment when additional scoring capacity is added.
-- Validate capacity using production-like load tests and explicit headroom assumptions.
+1.  **Foundation:** Data contracts, infrastructure sizing,
+    security/compliance, data-quality controls, core interfaces.
+2.  **Core Detection:** Ingestion, enrichment, real-time scoring, rules
+    evaluation, downstream score availability.
+3.  **Investigation Workflow:** Alert generation, routing, and case
+    management.
+4.  **ML and External Signals:** Model lifecycle capabilities and
+    third-party signal integration.
+5.  **Operational Hardening:** Scale/resilience testing, observability,
+    compliance validation, and operational controls.
 
-### NFR3 — Availability
-
-- Remove single points of failure from the transaction-scoring path.
-- Isolate failures in non-critical capabilities so they do not unnecessarily stop risk scoring.
-- Define health checks, dependency monitoring, and recovery procedures.
-- Final numerical availability SLO/SLA remains open.
-
-### NFR4 — Security
-
-- Encrypt sensitive data in transit and at rest.
-- Require strong authentication for operational, investigator, rules-management, and model-management interfaces.
-- Limit privileged actions to authorized roles.
-- Keep secrets outside source control and runtime logs.
-
-### NFR5 — Auditability
-
-Audit records should capture, at minimum, the actor or service identity, timestamp, action, affected resource, and result for:
-
-- rule creation, modification, simulation, and activation;
-- model validation and deployment activity;
-- alert assignment and case disposition;
-- security-sensitive administrative actions.
-
-### NFR6 — Compliance
-
-- Maintain technical controls and evidence needed to support applicable PCI, GDPR, and CCPA obligations identified by the business.
-- Treat exact retention, deletion, residency, consent, and access-control requirements as compliance-design inputs that must be confirmed before implementation.
-
-### NFR7 — Modularity
-
-- Separate transaction intake, scoring, rules, model lifecycle, external-data ingestion, alerting, and case management into clear functional boundaries.
-- Prevent implementation details of one component from becoming required knowledge for unrelated components.
-
-### NFR8 — Interface Stability
-
-- Use explicit, versioned contracts for component integrations.
-- Apply backward-compatible evolution where possible.
-- Validate contract changes before rollout to dependent consumers.
-
-## 5. Open Items Carried from BRD
-
-1. Confirm production capacity assumptions and infrastructure-sizing methodology beyond the stated 10,000 transactions/second peak.
-2. Define measurable data-quality and consistency controls for internal and third-party ingestion pipelines.
-3. Assign ownership and approval authority for fraud risk thresholds.
-4. Define alert assignment, escalation, reassignment, and workload-balancing policy.
-5. Define model-governance approval criteria, deployment controls, rollback policy, and ownership.
-6. Establish the numerical availability SLO/SLA for the real-time scoring path.
-7. Confirm detailed PCI, GDPR, and CCPA control requirements, including retention and deletion obligations, with the appropriate compliance stakeholders.
+**Technical assumption:** These phases are a proposed implementation
+sequence, not a business-approved project plan.

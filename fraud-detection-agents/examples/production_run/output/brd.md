@@ -1,59 +1,111 @@
-# Business Requirements Document
+# Business Requirements Document --- Fraud Detection System
 
-## Business Goals
+## 1. Business Objective
 
-- Reduce fraud losses by **25% over the next 12 months**.
-- Improve fraud-investigation accuracy and efficiency by reducing time spent on false positives.
-- Minimize unnecessary friction for legitimate customers while strengthening fraud detection.
+Reduce fraud losses by **25% within 12 months**, improve investigation
+accuracy and efficiency, reduce false-positive work, and avoid adding
+friction for legitimate customers.
 
-## Functional Requirements
+## 2. Scope
 
-### Transaction Risk Scoring
+-   Real-time transaction risk scoring using transaction attributes and
+    customer profile/history.
+-   Fraud rules managed by fraud operations.
+-   Simulation/testing of rule changes before production.
+-   Supervised fraud classification and unsupervised anomaly detection.
+-   Model lifecycle management for training, validation, deployment, and
+    monitoring.
+-   Risk-based alert generation, investigator routing, and case
+    management.
+-   Batch and real-time ingestion of external signals such as device
+    fingerprinting and IP reputation.
 
-- **FR1 — Real-time scoring:** The system must assign a fraud risk score to each incoming payment transaction in real time.
-- **FR2 — Scoring inputs:** Risk scoring must be able to use transaction attributes, customer profile information, and customer history.
-- **FR3 — Score availability:** Risk scores must be made available immediately for downstream systems to consume and act on.
+## 3. Functional Requirements
 
-### Rules Management
+-   **FR-01:** Assign a risk score to each incoming payment in real
+    time.
+-   **FR-02:** Make risk scores immediately available to downstream
+    systems.
+-   **FR-03:** Allow fraud operations to create and modify detection
+    rules without engineering involvement.
+-   **FR-04:** Support rules combining multiple attributes.
+-   **FR-05:** Allow rule simulation/testing before production
+    activation.
+-   **FR-06:** Support supervised classification and unsupervised
+    anomaly detection.
+-   **FR-07:** Provide model lifecycle capabilities for training,
+    validation, deployment, and monitoring.
+-   **FR-08:** Generate an alert when a transaction exceeds the
+    applicable risk threshold.
+-   **FR-09:** Route alerts using severity and team workload.
+-   **FR-10:** Provide case-management capabilities for investigation
+    and resolution.
+-   **FR-11:** Ingest third-party fraud signals in batch and real time.
+-   **FR-12:** Associate external signals with relevant internal data.
 
-- **FR4 — Business-managed rules:** Fraud operations users must be able to define and modify detection rules without engineering support for routine changes.
-- **FR5 — Complex rule conditions:** Rules must support combinations of multiple attributes.
-- **FR6 — Pre-production rule testing:** Users must be able to simulate and test rule changes before they are activated in production.
+## 4. Non-Functional Requirements
 
-### Machine-Learning Detection
+-   **NFR-01 --- Scalability:** Support approximately **10,000
+    transactions/second** at peak and scale as load grows.
+-   **NFR-02 --- Availability:** Scale without downtime.
+-   **NFR-03 --- Security:** Use strong encryption and authentication.
+-   **NFR-04 --- Auditability:** Provide detailed auditability.
+-   **NFR-05 --- Compliance:** Support applicable PCI, GDPR, and CCPA
+    requirements.
+-   **NFR-06 --- Modularity:** Use a modular, loosely coupled
+    architecture.
+-   **NFR-07 --- Interfaces:** Provide well-defined interfaces that can
+    evolve safely.
 
-- **FR7 — Supervised detection:** The platform must support supervised models for fraud classification using known fraud labels.
-- **FR8 — Unsupervised detection:** The platform must support unsupervised anomaly detection to identify unusual or previously unseen patterns.
-- **FR9 — Model lifecycle:** The data-science team must have an interface or portal supporting model training, validation, deployment, and monitoring.
+## 5. Business Rules
 
-### Alerts and Investigations
+-   Transactions exceeding the applicable risk threshold trigger an
+    alert.
+-   Alert routing considers severity and investigator/team workload.
+-   Fraud operations can manage detection rules without routine
+    engineering intervention.
+-   Rule changes must be testable through simulation before production
+    use.
 
-- **FR10 — Alert generation:** Transactions that exceed the configured risk threshold must generate an investigation alert.
-- **FR11 — Intelligent alert routing:** Alerts must be routed to investigators using factors including severity and current team workload.
-- **FR12 — Case management:** Investigators must have a case-management interface for investigating and resolving alerts.
+## 6. Data Requirements
 
-### External Data
+-   Transaction attributes.
+-   Customer profile and historical data.
+-   Known fraud labels for supervised learning.
+-   Data suitable for anomaly detection.
+-   Device fingerprinting and IP reputation signals.
+-   Batch and real-time external feeds.
+-   Clean, consistently prepared data across pipelines.
 
-- **FR13 — Third-party signals:** The system must support external fraud signals such as device fingerprinting, IP reputation, and external scores.
-- **FR14 — Multi-mode ingestion:** Third-party data must be ingestible in both batch and real-time modes.
-- **FR15 — Data integration:** External signals must be combined with internal customer and transaction data for detection and scoring.
+## 7. Dependencies
 
-## Non-Functional Requirements
+-   Internal transaction/customer data availability and quality.
+-   Fraud labels for supervised model development.
+-   Third-party fraud-data providers.
+-   Downstream systems capable of consuming risk scores.
+-   Infrastructure capable of supporting required transaction volume.
+-   Investigation workflows for receiving and resolving alerts.
 
-- **NFR1 — Throughput:** The platform must support peak transaction volumes of approximately **10,000 transactions per second**.
-- **NFR2 — Scalability:** The architecture must support scaling capacity as transaction volume grows without requiring major application redesign.
-- **NFR3 — Availability:** Fraud-scoring services must be designed for high availability because scoring is part of the transaction path.
-- **NFR4 — Security:** Sensitive financial and customer data must be protected with strong encryption and authentication controls.
-- **NFR5 — Auditability:** Security-sensitive and operational actions must produce a detailed audit trail.
-- **NFR6 — Compliance:** The solution must support applicable obligations discussed in the meeting, including **PCI, GDPR, and CCPA**.
-- **NFR7 — Modularity:** Components should be modular and loosely coupled so individual capabilities can be replaced or evolved without major platform-wide changes.
-- **NFR8 — Interface stability:** Component interactions should use well-defined interfaces that can evolve without disrupting dependent services.
+## 8. Risks
 
-## Questions & Risks
+-   Infrastructure sizing remains unresolved.
+-   Data consistency across pipelines may affect scoring and model
+    quality.
+-   Incorrectly prepared data may affect detection accuracy.
+-   Insufficiently tested rule changes may adversely affect detection
+    behavior.
+-   External-data availability or quality may affect accuracy.
 
-- **Infrastructure sizing:** Final production capacity and infrastructure sizing need to be validated against expected traffic and growth assumptions.
-- **Data consistency and quality:** Reliable scoring depends on consistent, clean, and correctly prepared data across ingestion pipelines.
-- **Risk-threshold ownership:** The meeting establishes threshold-based alerting but does not define who owns threshold configuration or approval.
-- **Alert-routing policy:** Severity and investigator workload are identified as routing factors, but the exact assignment algorithm and escalation rules remain open.
-- **Model governance:** Training, validation, deployment, and monitoring are required, but approval criteria, rollback rules, and model-governance ownership are not yet defined.
-- **Availability target:** High availability is required, but a numerical SLO/SLA was not finalized in the meeting.
+## 9. Open Questions
+
+1.  What infrastructure sizing is required?
+2.  What latency target defines "immediately" for scoring and downstream
+    availability?
+3.  What availability target/SLA is required?
+4.  What authentication and authorization mechanisms are required?
+5.  Which PCI requirements apply to the specific data flows?
+6.  How will risk thresholds be defined and governed?
+7.  Which third-party data providers will be used?
+8.  What data-quality and consistency controls are required?
+9.  What investigator workflow states and case-resolution outcomes are
+    required?
